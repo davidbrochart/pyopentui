@@ -1,0 +1,33 @@
+[project]
+name = "pyopentui"
+version = "0.1.0"
+description = "Python bindings for OpenTUI - a native terminal UI core written in Zig"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name = "David Brochart", email = "david.brochart@gmail.com" },
+]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Homepage = "https://github.com/davidbrochart/pyopentui"
+Repository = "https://github.com/davidbrochart/pyopentui"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+pyopentui = ["lib/*"]
+
+[dependency-groups]
+dev = ["pytest"]
