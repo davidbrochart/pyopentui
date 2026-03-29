@@ -41,27 +41,21 @@ feed.commit()
 
 ## Development
 
-Get the latest `opentui` code:
 ```bash
+# Get the latest `opentui` code:
 curl -L -o opentui.zip https://github.com/anomalyco/opentui/archive/refs/tags/v0.1.92.zip
 unzip opentui.zip
-```
 
-Compile the core Zig code:
-```bash
+#Compile the core Zig code:
 cd opentui-0.1.92/packages/core/src/zig
 zig build
-```
 
-Copy the shared library in the `lib` directory:
-```bash
+#Copy the shared library in the `lib` directory:
 cd -
 mkdir src/pyopentui/lib
 cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
-```
 
-Install with dev dependencies:
-```bash
+#Install with dev dependencies:
 pip install -e . --group dev
 ```
 

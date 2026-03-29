@@ -14,6 +14,7 @@ from ctypes import (
     c_int64,
     c_float,
     c_bool,
+    c_char,
     c_char_p,
     c_size_t,
     Structure,
@@ -314,7 +315,7 @@ def _setup_functions(lib: CDLL) -> None:
 
     lib.textBufferGetPlainText.argtypes = [
         c_void_p,
-        c_char_p,
+        c_void_p,
         c_size_t,
     ]
     lib.textBufferGetPlainText.restype = c_size_t
@@ -346,7 +347,7 @@ def _setup_functions(lib: CDLL) -> None:
     lib.editBufferGetCursor.argtypes = [c_void_p, POINTER(c_uint32), POINTER(c_uint32)]
     lib.editBufferGetCursor.restype = None
 
-    lib.editBufferGetText.argtypes = [c_void_p, c_char_p, c_size_t]
+    lib.editBufferGetText.argtypes = [c_void_p, c_void_p, c_size_t]
     lib.editBufferGetText.restype = c_size_t
 
     lib.editBufferUndo.argtypes = [c_void_p]
@@ -505,12 +506,16 @@ class OptimizedBuffer:
         height: int,
         respect_alpha: bool = False,
         width_method: int = 0,
-        id: str = "",
+        id: str = "unnamed buffer",
     ):
-        id_bytes = id.encode("utf-8") if id else None
-        id_len = len(id_bytes) if id_bytes else 0
+        self._id_bytes = bytearray(id.encode("utf-8"))
         self._ptr = _lib.createOptimizedBuffer(
-            width, height, respect_alpha, width_method, id_bytes, id_len
+            width,
+            height,
+            respect_alpha,
+            width_method,
+            bytes(self._id_bytes),
+            len(self._id_bytes),
         )
         if not self._ptr:
             raise RuntimeError("Failed to create buffer")
@@ -632,9 +637,12 @@ class TextBuffer:
 
     def get_text(self) -> str:
         max_len = 4096
-        buffer = create_string_buffer(max_len)
-        length = _lib.textBufferGetPlainText(self._ptr, buffer, max_len)
-        return buffer.value.decode("utf-8")
+        buffer = bytearray(max_len)
+        addr = ctypes.addressof(ctypes.c_char.from_buffer(buffer))
+        length = _lib.textBufferGetPlainText(self._ptr, addr, max_len)
+        if length == 0:
+            return ""
+        return bytes(buffer[:length]).decode("utf-8")
 
 
 class EditBuffer:
@@ -680,9 +688,12 @@ class EditBuffer:
 
     def get_text(self) -> str:
         max_len = 4096
-        buffer = create_string_buffer(max_len)
-        length = _lib.editBufferGetText(self._ptr, buffer, max_len)
-        return buffer.value.decode("utf-8")
+        buffer = bytearray(max_len)
+        addr = ctypes.addressof(ctypes.c_char.from_buffer(buffer))
+        length = _lib.editBufferGetText(self._ptr, addr, max_len)
+        if length == 0:
+            return ""
+        return bytes(buffer[:length]).decode("utf-8")
 
     def undo(self) -> bool:
         return bool(_lib.editBufferUndo(self._ptr))
