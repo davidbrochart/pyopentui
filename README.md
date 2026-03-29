@@ -1,5 +1,7 @@
 # pyopentui
 
+[![Test](https://github.com/davidbrochart/pyopentui/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/davidbrochart/pyopentui/actions/workflows/test.yml)
+
 Python bindings for OpenTUI - a native terminal UI core written in Zig.
 
 ## Installation
@@ -8,76 +10,44 @@ Python bindings for OpenTUI - a native terminal UI core written in Zig.
 pip install pyopentui
 ```
 
-## Usage
-
-```python
-import pyopentui
-
-# Create a buffer for rendering
-buffer = pyopentui.OptimizedBuffer(80, 24)
-buffer.clear(r=0.1, g=0.1, b=0.2)
-buffer.draw_text("Hello, OpenTUI!", x=5, y=5)
-
-# Work with text
-tb = pyopentui.TextBuffer()
-tb.append("Hello World")
-
-# Work with editable text
-eb = pyopentui.EditBuffer()
-eb.set_text("Editable text")
-eb.move_cursor_right()
-eb.insert_text(" - inserted")
-
-# Create a viewport-managed editor
-eb = pyopentui.EditBuffer()
-eb.set_text("Line 1\nLine 2\nLine 3")
-view = pyopentui.EditorView(eb, 80, 24)
-
-# Handle input streams
-feed = pyopentui.NativeSpanFeed()
-feed.write("user input")
-feed.commit()
-```
-
 ## Development
 
-Get the latest `opentui` code:
+Install [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html), then:
+
 ```bash
+# Create a conda environment and install pip and zig:
+git clean -fdx
+micromamba create -n pyopentui -y
+micromamba activate pyopentui
+micromamba install pip zig -y
+
+# Get the latest opentui code:
 curl -L -o opentui.zip https://github.com/anomalyco/opentui/archive/refs/tags/v0.1.92.zip
 unzip opentui.zip
-```
 
-Compile the core Zig code:
-```bash
+# Compile the core Zig code:
 cd opentui-0.1.92/packages/core/src/zig
-zig build
-```
+zig build -Doptimize=ReleaseSafe
 
-Copy the shared library in the `lib` directory:
-```bash
+# Copy the shared library in the lib directory:
 cd -
 mkdir src/pyopentui/lib
-cp opentui-0.1.92/packages/core/src/zig/lib/*/libopentui.so src/pyopentui/lib
-```
+cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
 
-Install with dev dependencies:
-```bash
+# Install the package in editable mode:
 pip install -e . --group dev
 ```
 
 Run tests:
+
 ```bash
 pytest -v tests
 ```
 
 Build the package:
+
 ```bash
-pip install build
 python -m build --wheel
 python -m build --sdist
-mv dist/pyopentui-0.1.0-py3-none-any.whl dist/pyopentui-0.1.0-py3-none-linux_x86_64.whl
+python rename_wheel.py
 ```
-
-## License
-
-MIT

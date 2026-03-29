@@ -1,6 +1,6 @@
 [project]
 name = "pyopentui"
-version = "0.1.0"
+version = "0.0.0"
 description = "Python bindings for OpenTUI - a native terminal UI core written in Zig"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -27,7 +27,12 @@ Repository = "https://github.com/davidbrochart/pyopentui"
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
-pyopentui = ["lib/*"]
+pyopentui = ["lib/*.so", "lib/*.dll", "lib/*.dylib"]
 
 [dependency-groups]
-dev = ["pytest"]
+dev = [
+  "build",
+  "packaging",
+  "pytest",
+  "tomli; python_version < '3.11'"
+]
