@@ -12,12 +12,32 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: mamba-org/setup-micromamba@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          environment-name: env
+          create-args: >-
+            python=${{ matrix.python-version }}
+            zig
+      - name: Download opentui source code
+        run: |
+          curl -L -o opentui.zip https://github.com/anomalyco/opentui/archive/refs/tags/v0.1.92.zip
+          unzip opentui.zip
+      - name: Compile opentui Zig core
+        run: |
+          cd opentui-0.1.92/packages/core/src/zig
+          zig build
+          cd -
+          mkdir src/pyopentui/lib
+          cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
       - name: Install dependencies
         run: |
           pip install -e . --group dev
       - name: Run tests
         run: |
-          pytest tests
+          pytest -v tests
+      - name: Build the package
+        run: |
+          pip install build
+          python -m build --wheel
+          python -m build --sdist
+          mv dist/pyopentui-0.1.0-py3-none-any.whl dist/pyopentui-0.1.0-py3-none-linux_x86_64.whl

@@ -57,7 +57,7 @@ Copy the shared library in the `lib` directory:
 ```bash
 cd -
 mkdir src/pyopentui/lib
-cp opentui-0.1.92/packages/core/src/zig/lib/*/libopentui.so src/pyopentui/lib
+cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
 ```
 
 Install with dev dependencies:
