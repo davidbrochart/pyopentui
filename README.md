@@ -48,7 +48,7 @@ unzip opentui.zip
 
 #Compile the core Zig code:
 cd opentui-0.1.92/packages/core/src/zig
-zig build
+zig build -Doptimize=ReleaseSafe
 
 #Copy the shared library in the `lib` directory:
 cd -
