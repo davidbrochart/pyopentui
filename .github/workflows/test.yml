@@ -29,7 +29,7 @@ jobs:
           cd -
           mkdir src/pyopentui/lib
           cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
-      - name: Install dependencies
+      - name: Install the package in editable mode
         run: |
           pip install -e . --group dev
       - name: Run tests
@@ -37,7 +37,6 @@ jobs:
           pytest -v tests --color=yes
       - name: Build the package
         run: |
-          pip install build
           python -m build --wheel
           python -m build --sdist
-          mv dist/pyopentui-0.1.0-py3-none-any.whl dist/pyopentui-0.1.0-py3-none-linux_x86_64.whl
+          python rename_wheel.py

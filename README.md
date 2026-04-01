@@ -12,7 +12,15 @@ pip install pyopentui
 
 ## Development
 
+Install [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html), then:
+
 ```bash
+# Create a conda environment and install pip and zig:
+git clean -fdx
+micromamba create -n pyopentui -y
+micromamba activate pyopentui
+micromamba install pip zig -y
+
 # Get the latest opentui code:
 curl -L -o opentui.zip https://github.com/anomalyco/opentui/archive/refs/tags/v0.1.92.zip
 unzip opentui.zip
@@ -26,7 +34,7 @@ cd -
 mkdir src/pyopentui/lib
 cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
 
-# Install with dev dependencies:
+# Install the package in editable mode:
 pip install -e . --group dev
 ```
 
@@ -39,8 +47,7 @@ pytest -v tests
 Build the package:
 
 ```bash
-pip install build
 python -m build --wheel
 python -m build --sdist
-mv dist/pyopentui-0.1.0-py3-none-any.whl dist/pyopentui-0.1.0-py3-none-linux_x86_64.whl
+python rename_wheel.py
 ```
