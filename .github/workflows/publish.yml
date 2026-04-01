@@ -32,20 +32,33 @@ jobs:
           cd -
           mkdir src/pyopentui/lib
           cp opentui-0.1.92/packages/core/src/zig/lib/*/* src/pyopentui/lib
-      - name: Build the package
+      - name: Install the package in editable mode
+        run: |
+          pip install -e . --group dev
+      - name: Run tests
+        run: |
+          pytest -v tests --color=yes
+      - name: Build the wheel
         run: |
           python -m build --wheel
-          python -m build --sdist
           python rename_wheel.py
+      - name: Build the sdist
+        if: ${{ (matrix.python-version == '3.14') && (matrix.os == 'ubuntu') }}
+        run: |
+          python -m build --sdist
       - uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: ${{ matrix.os }}-${{ matrix.python-version }}
           path: dist
 
   pypi-publish:
     name: Upload release to PyPI
     needs: build
     runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [ubuntu, macos, windows]
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     environment: release
     permissions:
       id-token: write
@@ -53,7 +66,7 @@ jobs:
     - name: Retrieve packages
       uses: actions/download-artifact@v5
       with:
-        name: dist
+        name: ${{ matrix.os }}-${{ matrix.python-version }}
         path: dist
     - name: Display structure of downloaded files
       run: ls -R
