@@ -1,9 +1,11 @@
 name: Test
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}-latest
@@ -35,8 +37,3 @@ jobs:
       - name: Run tests
         run: |
           pytest -v tests --color=yes
-      - name: Build the package
-        run: |
-          python -m build --wheel
-          python -m build --sdist
-          python rename_wheel.py
