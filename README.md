@@ -44,7 +44,3 @@ python -m build --wheel
 python -m build --sdist
 mv dist/pyopentui-0.1.0-py3-none-any.whl dist/pyopentui-0.1.0-py3-none-linux_x86_64.whl
 ```
-
-## License
-
-MIT
