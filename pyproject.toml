@@ -1,6 +1,6 @@
 [project]
 name = "pyopentui"
-version = "0.0.0"
+version = "0.1.1"
 description = "Python bindings for OpenTUI - a native terminal UI core written in Zig"
 readme = "README.md"
 license = { file = "LICENSE" }
