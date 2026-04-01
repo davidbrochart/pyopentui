@@ -14,12 +14,12 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
       - uses: mamba-org/setup-micromamba@v3
         with:
           environment-name: env
           create-args: >-
             python=${{ matrix.python-version }}
-            zig
       - name: Download opentui source code
         run: |
           curl -L -o opentui.zip https://github.com/anomalyco/opentui/archive/refs/tags/v0.1.92.zip
